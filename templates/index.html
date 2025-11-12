@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Data Siswa (Azka)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        :root {
+            --primary: #2563eb;
+            --secondary: #60a5fa;
+            --bg: #f9fafb;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(135deg, #dbeafe, #f9fafb);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px; 
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 25px; 
+            animation: fadeDown 1s ease-in-out;
+        }
+
+        h2::after {
+            content: "";
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            display: block;
+            margin: 8px auto 0;
+            border-radius: 2px;
+            animation: growLine 1.5s ease-in-out;
+        }
+
+        label.tambah-btn {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px; 
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        label.tambah-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(96,165,250,0.6);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            animation: slideUp 1s ease forwards;
+            margin-bottom: 60px; 
+        }
+
+        th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: #e0f2fe;
+            transform: scale(1.01);
+        }
+
+        tr {
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        #tambah-toggle {
+            display: none;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #tambah-toggle:checked + .modal {
+            display: flex;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 400px;
+            animation: popUp 0.4s ease forwards;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .modal-content label {
+            display: block;
+            margin: 8px 0 4px;
+            font-weight: 600;
+        }
+
+        .modal-content input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+
+        .btn-group button,
+        .btn-group label {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .btn-group label {
+            background: #ccc;
+            color: #333;
+        }
+
+        .btn-group button:hover {
+            background: var(--secondary);
+        }
+
+        .btn-group label:hover {
+            background: #aaa;
+        }
+
+        @keyframes slideUp {
+            0% {transform: translateY(50px); opacity: 0;}
+            100% {transform: translateY(0); opacity: 1;}
+        }
+
+        @keyframes fadeDown {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        @keyframes growLine {
+            from {width: 0; opacity: 0;}
+            to {width: 80px; opacity: 1;}
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes popUp {
+            from {transform: scale(0.8); opacity: 0;}
+            to {transform: scale(1); opacity: 1;}
+        }
+
+        .data-nilai-btn {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+            animation: fadeIn 1s ease;
+        }
+
+        .data-nilai-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(96,165,250,0.5);
+        }
+
+        .data-nilai-btn:active {
+            transform: scale(0.97);
+        }
+
+    </style>
+</head>
+<body>
+    <h2>Daftar Data Siswa</h2>
+
+    <label for="tambah-toggle" class="tambah-btn">+ Tambah Data</label>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div style="margin: 10px 0;">
+            {% for category, message in messages %}
+                <div style="
+                padding: 10px;
+                border-radius: 5px;
+                color: white;
+                margin-bottom: 5px;
+                background-color: {% if category == 'error' %}#dc2626{% else %}#16a34a{% endif %};">
+                {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+    <table>
+        <tr>
+            <th>NIS</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Alamat</th>
+            <th>Jenis Kelamin</th>
+            <th>Aksi</th>
+        </tr>
+        {% if siswa %}
+            {% for s in siswa %}
+            <tr>
+                <td data-label="NIS">{{ s.NIS }}</td>
+                <td data-label="Nama">{{ s.nama }}</td>
+                <td data-label="kelas">{{ s.nama_kelas }}</td>
+                <td data-label="Alamat">{{ s.alamat }}</td>
+                <td data-label="Jenis Kelamin">{{ s.Jenis_Kelamin }}</td>
+                <td data-label="Aksi">
+                    <form action="{{ url_for('edit_form', nis=s.NIS) }}" method="get" style="display:inline;">
+                        <button type="submit">Edit</button>
+                    </form>
+                    /
+                    <form action="{{ url_for('delete') }}" method="post" style="display:inline;">
+                        <input type="hidden" name="AzkaNis" value="{{ s.NIS }}">
+                        <button type="submit" onclick="return confirm('Yakin Ingin di hapus?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="4" style="text-align:center;">Data tidak ditemukan</td></tr>
+        {% endif %}
+    </table>
+
+    <input type="checkbox" id="tambah-toggle">
+
+    <div class="modal">
+        <div class="modal-content">
+            <h3>Tambah Data Siswa</h3>
+            <form method="POST" action="/proses">
+                <label for="NIS">NIS</label>
+                <input type="text" name="AzkaNis" required>
+
+                <label for="id_Kelas">Nama Kelas</label>
+                <input type="number" name="AzkaKelas" required>
+
+                <label for="nama">Nama</label>
+                <input type="text" name="Azkanama" required>
+
+                <label for="alamat">Alamat</label>
+                <input type="text" name="Azkaalamat" required>
+
+                <label for="Jenis_Kelamin">Jenis Kelamin</label>
+                <select name="AzkaJenis_Kelamin" required>
+                    <option value="">-- Pilih --</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
+
+                <div class="btn-group">
+                    <button type="submit">Simpan</button>
+                    <label for="tambah-toggle">Batal</label>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% if siswa_edit %}
+<div class="modal" style="display:flex;">
+    <div class="modal-content">
+        <h3>Edit Data Siswa</h3>
+        <form method="POST" action="/update">
+            
+            <label>NIS</label>
+            <input type="text" name="AzkaNis" value="{{ siswa_edit.NIS }}" readonly>
+            
+            <label>Nama</label>
+            <input type="text" name="Azkanama" value="{{ siswa_edit.nama }}" required>
+            
+            <label>Kelas</label>
+            <input type="text" name="AzkaKelas" value="{{ siswa_edit.Kelas }}" required>
+            
+
+            <label>Alamat</label>
+            <input type="text" name="Azkaalamat" value="{{ siswa_edit.alamat }}" required>
+
+            <label>Jenis Kelamin</label>
+            <select name="AzkaJenis_Kelamin" required>
+                <option value="Laki-laki" {% if siswa_edit.Jenis_Kelamin == 'Laki-laki' %}selected{% endif %}>Laki-laki</option>
+                <option value="Perempuan" {% if siswa_edit.Jenis_Kelamin == 'Perempuan' %}selected{% endif %}>Perempuan</option>
+            </select>
+
+            <div class="btn-group">
+                <button type="submit">Simpan Perubahan</button>
+                <a href="/" style="background:#ccc;padding:8px 16px;border-radius:8px;color:#333;text-decoration:none;">Batal</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<div class="button-group">
+    <form action="{{ url_for('data_nilai') }}">
+        <button type="submit" class="data-nilai-btn">Data Nilai</button>
+    </form>
+    <form action="{{ url_for('kelas') }}">
+        <button type="submit" class="data-nilai-btn">Data Kelas</button>
+    </form>
+        <form action="{{ url_for('Guru') }}">
+        <button type="submit" class="data-nilai-btn">Data Guru</button>
+    </form>
+</div>
+
+</body>
+</html>

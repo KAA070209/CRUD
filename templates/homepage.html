@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Homepage — Sidebar Animasi</title>
+  <style>
+    /* Reset sederhana */
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0f172a; /* navy-900 */
+      --panel:#0b1220; /* darker */
+      --accent:#7c3aed; /* purple */
+      --muted:#94a3b8; /* slate */
+      --glass: rgba(255,255,255,0.04);
+      --radius:14px;
+    }
+
+    body{font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#e6eef8;background:linear-gradient(180deg,#071029 0%, #071021 60%);min-height:100vh;display:flex}
+
+    /* LAYOUT */
+    .app{display:flex;width:100%;height:100vh;overflow:hidden}
+
+    /* SIDEBAR */
+    .sidebar{width:320px;max-width:86vw;background:linear-gradient(180deg, rgba(124,58,237,0.14), transparent), var(--panel);backdrop-filter: blur(6px);box-shadow: 0 10px 30px rgba(2,6,23,0.6);padding:28px;border-radius:0 24px 24px 0;position:relative;transform:translateX(0);transition:width .4s cubic-bezier(.2,.9,.25,1)}
+
+    .brand{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+    .logo{width:52px;height:52px;border-radius:12px;display:inline-grid;place-items:center;background:linear-gradient(135deg,var(--accent),#06b6d4);color:white;font-weight:700;box-shadow:0 8px 30px rgba(124,58,237,0.18)}
+    .brand h1{font-size:18px;letter-spacing:.2px}
+    .brand p{font-size:12px;color:var(--muted)}
+
+    /* Nav */
+    nav{display:flex;flex-direction:column;gap:8px}
+    .nav-item{display:flex;align-items:center;gap:14px;padding:12px;border-radius:12px;color:#dbeafe;cursor:pointer;position:relative}
+    .nav-item .icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--glass);backdrop-filter: blur(4px)}
+    .nav-item .title{font-weight:600}
+    .nav-item .desc{font-size:12px;color:var(--muted)}
+
+    /* Active indicator */
+    .nav-item::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%) scaleY(.8);width:6px;height:6px;border-radius:6px;background:transparent;transition:transform .35s, background .35s}
+    .nav-item:hover{transform:translateX(6px);transition:transform .25s}
+    .nav-item:hover::before{transform:translateY(-50%) scaleY(1);background:linear-gradient(180deg,var(--accent),#06b6d4)}
+    .nav-item.active{background:linear-gradient(90deg, rgba(124,58,237,0.12), rgba(6,182,212,0.04));box-shadow:inset 0 1px 0 rgba(255,255,255,0.02)}
+    .nav-item.active::before{background:linear-gradient(180deg,var(--accent),#06b6d4);transform:translateY(-50%) scaleY(1.4);left:-18px;width:10px;height:40px;border-radius:8px}
+
+    /* COLLAPSIBLE SUBMENU */
+    .submenu{overflow:hidden;max-height:0;transition:max-height .45s cubic-bezier(.2,.9,.25,1);padding-left:52px}
+    .submenu.open{max-height:360px}
+    .submenu a{display:block;padding:8px 12px;border-radius:8px;color:var(--muted);font-size:13px}
+    .submenu a:hover{color:#fff;background:rgba(255,255,255,0.02)}
+
+    /* Footer controls */
+    .sidebar-footer{position:absolute;left:28px;bottom:28px;right:28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .profile{display:flex;align-items:center;gap:12px}
+    .avatar{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#06b6d4,var(--accent));display:grid;place-items:center;color:#071029;font-weight:700}
+    .toggle-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:10px;cursor:pointer}
+
+    /* MAIN */
+    .main{flex:1;padding:36px;overflow:auto}
+    header.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+    .search{min-width:320px;background:var(--glass);padding:8px 12px;border-radius:12px;display:flex;align-items:center;gap:10px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:22px;border-radius:14px;box-shadow:0 8px 30px rgba(2,6,23,0.45);}
+
+    /* ANIMATIONS */
+    @keyframes floatIn {
+      from{opacity:0;transform:translateY(8px) scale(.985)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    .nav-item{animation:floatIn .35s both ease;}
+    .nav-item:nth-child(1){animation-delay:.03s}
+    .nav-item:nth-child(2){animation-delay:.06s}
+    .nav-item:nth-child(3){animation-delay:.09s}
+    .nav-item:nth-child(4){animation-delay:.12s}
+
+    /* RESPONSIVE: collapse sidebar to mini */
+    .sidebar.mini{width:88px;border-radius:0 12px 12px 0;padding:18px}
+    .sidebar.mini .brand p, .sidebar.mini .brand h1, .sidebar.mini .desc, .sidebar.mini .title{display:none}
+    .sidebar.mini .nav-item{justify-content:center}
+    .sidebar.mini .nav-item .icon{width:44px;height:44px;border-radius:10px}
+    .sidebar.mini .sidebar-footer{left:12px;right:12px}
+
+    /* small screens: hidden by default, toggleable */
+    @media (max-width:880px){
+      .sidebar{position:fixed;left:0;top:0;height:100vh;z-index:60;transform:translateX(-130%);transition:transform .42s cubic-bezier(.2,.9,.25,1)}
+      .sidebar.open{transform:translateX(0)}
+      .main{padding:18px}
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo">KAA</div>
+        <div>
+          <h1>SiteGlimpse</h1>
+          <p>Dashboard &amp; controls</p>
+        </div>
+      </div>
+
+      <nav>
+        <div class="nav-item active" data-action="dashboard">
+          <div class="icon">🏠</div>
+          <div>
+            <div class="title">Dashboard</div>
+            <div class="desc">Ringkasan & statistik</div>
+          </div>
+        </div>
+
+        <div class="nav-item" id="menu-projects">
+          <div class="icon">📁</div>
+          <div>
+            <div class="title">Projects</div>
+            <div class="desc">Kelola projek</div>
+          </div>
+        </div>
+
+        <div class="nav-item" data-action="reports">
+          <div class="icon">📊</div>
+          <div>
+            <div class="title">Reports</div>
+            <div class="desc">Laporan & analitik</div>
+          </div>
+        </div>
+
+        <div class="nav-item" id="menu-settings">
+          <div class="icon">⚙️</div>
+          <div>
+            <div class="title">Settings</div>
+            <div class="desc">Preferensi & akun</div>
+          </div>
+        </div>
+
+        <div class="submenu" id="submenu-projects">
+          <a href="#">Semua Projects</a>
+          <a href="#">Buat Project</a>
+          <a href="#">Label & Kategori</a>
+        </div>
+
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="profile">
+          <div class="avatar">KA</div>
+          <div>
+            <div style="font-weight:700">Ka User</div>
+            <div style="font-size:12px;color:var(--muted)">Administrator</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="toggle-btn" id="btn-mini">Mini</button>
+          <button class="toggle-btn" id="btn-open">☰</button>
+        </div>
+      </div>
+
+    </aside>
+
+    <main class="main">
+      <header class="top">
+        <div class="search card">🔎 <input placeholder="Cari..." style="background:transparent;border:0;outline:none;color:#e6eef8;font-size:14px;width:100%"></div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="card">Notifikasi</div>
+          <div class="card">Bantuan</div>
+        </div>
+      </header>
+
+      <section style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+        <div class="card">Konten 1</div>
+        <div class="card">Konten 2</div>
+        <div class="card">Konten 3</div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const btnMini = document.getElementById('btn-mini');
+    const btnOpen = document.getElementById('btn-open');
+    const menuProjects = document.getElementById('menu-projects');
+    const submenuProjects = document.getElementById('submenu-projects');
+    const menuSettings = document.getElementById('menu-settings');
+
+    btnMini.addEventListener('click', ()=>{
+      sidebar.classList.toggle('mini');
+    });
+
+    btnOpen.addEventListener('click', ()=>{
+      sidebar.classList.toggle('open');
+    });
+
+    menuProjects.addEventListener('click', ()=>{
+      submenuProjects.classList.toggle('open');
+      menuProjects.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e)=>{
+      if(window.innerWidth <= 880){
+        if(!sidebar.contains(e.target) && !btnOpen.contains(e.target)){
+          sidebar.classList.remove('open');
+        }
+      }
+    });
+
+    document.addEventListener('keydown', (e)=>{ if(e.key==='m') sidebar.classList.toggle('mini') });
+  </script>
+</body>
+</html>
